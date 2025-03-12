@@ -1,0 +1,1425 @@
+openapi: 3.0.3
+info:
+  title: Hogwarts Artifacts Online
+  description: |
+    Hogwarts Artifacts Online provides REST APIs to CRUD artifacts, wizards, and users.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Bingyang Wei
+    email: b.wei@tcu.edu
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Development server
+tags:
+  - name: artifact
+    description: Endpoints related to Hogwarts artifacts
+    externalDocs:
+      description: Find out more
+      url: http://swagger.io
+  - name: wizard
+    description: Endpoints related to Hogwarts wizards
+  - name: user
+    description: Endpoints related to Hogwarts users
+paths:
+  /artifacts:
+    get:
+      tags:
+        - artifact
+      summary: Find all artifacts
+      description: Find all artifacts and return them in an array.
+      operationId: findAllArtifacts
+      responses:
+        200:
+          description: All artifacts found and returned
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseFindAllArtifacts'
+      security: [] # no need to authenticate this endpoint
+    post:
+      tags:
+        - artifact
+      summary: Add an artifact
+      description: Add a new artifact and return the saved one.
+      operationId: addArtifact
+      requestBody:
+        description: The new artifact
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/Artifact'
+              example:
+                name: Remembrall
+                description: A Remembrall was a magical large marble-sized glass ball that contained smoke which turned red when its owner or user had forgotten something. It turned clear once whatever was forgotten was remembered.
+                imageUrl: ImageUrl
+        required: true
+      responses:
+        200:
+          description: Artifact added and returned
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseAddArtifact'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseArtifactBadRequest'
+      # security:
+      #   - petstore_auth:
+      #       - 'write:pets'
+      #       - 'read:pets'
+  /artifacts/{artifactId}:
+    get:
+      tags:
+        - artifact
+      summary: Find an artifact by Id
+      description: Find a single artifact and return it.
+      operationId: findArtifactById
+      parameters:
+        - name: artifactId
+          in: path
+          description: Id of artifact to return
+          required: true
+          schema:
+            type: string
+            example: '1250808601744904192'
+      responses:
+        200:
+          description: Artifact found and returned
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseFindOneArtifact'
+        404:
+          description: Artifact not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseArtifactNotFound'
+      security: [] # no need to authenticate this endpoint
+    put:
+      tags:
+        - artifact
+      summary: Update an artifact
+      description: Update an exisiting artifact and return the updated one.
+      operationId: updateArtifact
+      parameters:
+        - name: artifactId
+          in: path
+          description: Id of artifact to update
+          required: true
+          schema:
+            type: string
+            example: '1250808601744904191'
+      requestBody:
+        description: The artifact with updated info
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/Artifact'
+              example:
+                name: Deluminator-update
+                description: A Deluminator is a device invented by Albus Dumbledore that resembles a cigarette lighter. It is used to remove or absorb (as well as return) the light from any light source to provide cover to the user.-update
+                imageUrl: ImageUrl-update
+        required: true
+      responses:
+        200:
+          description: Artifact updated and returned
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseUpdateArtifact'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseArtifactBadRequest'
+        404:
+          description: Artifact not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseArtifactNotFound'
+    delete:
+      tags:
+        - artifact
+      summary: Delete an artifact
+      description: Delete a single artifact.
+      operationId: deleteArtifact
+      parameters:
+        - name: artifactId
+          in: path
+          description: Id of artifact to delete
+          required: true
+          schema:
+            type: string
+            example: '1250808601744904191'
+      responses:
+        200:
+          description: Artifact deleted
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseDelete'
+        404:
+          description: Artifact not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseArtifactNotFound'
+
+  /wizards:
+    get:
+      tags:
+        - wizard
+      summary: Find all wizards
+      description: Find all wizards and return them in an array.
+      operationId: findAllWizards
+      responses:
+        200:
+          description: All wizards found and returned
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseFindAllWizards'
+    post:
+      tags:
+        - wizard
+      summary: Add a wizard
+      description: Add a new wizard and return the saved one.
+      operationId: addWizard
+      requestBody:
+        description: The new wizard
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/Wizard'
+              example:
+                name: Hermione Granger
+        required: true
+      responses:
+        200:
+          description: Wizard added and returned
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseAddWizard'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseWizardBadRequest'
+      # security:
+      #   - petstore_auth:
+      #       - 'write:pets'
+      #       - 'read:pets'
+  /wizards/{wizardId}:
+    get:
+      tags:
+        - wizard
+      summary: Find a wizard by Id
+      description: Find a single wizard and return it.
+      operationId: findWizardById
+      parameters:
+        - name: wizardId
+          in: path
+          description: Id of wizard to return
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        200:
+          description: Wizard found and returned
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseFindOneWizard'
+        404:
+          description: Wizard not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseWizardNotFound'
+    put:
+      tags:
+        - wizard
+      summary: Update a wizard
+      description: Update an exisiting wizard and return the updated one.
+      operationId: updateWizard
+      parameters:
+        - name: wizardId
+          in: path
+          description: Id of wizard to update
+          required: true
+          schema:
+            type: integer
+            example: 2
+      requestBody:
+        description: The wizard with updated info
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/Wizard'
+              example:
+                name: Harry Potter-update
+        required: true
+      responses:
+        200:
+          description: Wizard updated and returned
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseUpdateWizard'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseWizardBadRequest'
+        404:
+          description: Wizard not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseWizardNotFound'
+    delete:
+      tags:
+        - wizard
+      summary: Delete a wizard
+      description: Delete a single wizard. This will not delete
+      operationId: deleteWizard
+      parameters:
+        - name: wizardId
+          in: path
+          description: Id of wizard to delete
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        200:
+          description: Wizard deleted
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseDelete'
+        404:
+          description: Wizard not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseWizardNotFound'
+  /wizards/{wizardId}/artifacts/{artifactId}:
+    put:
+      tags:
+        - wizard
+      summary: Assign an artifact to a wizard
+      description: Assign an artifact to a wizard.
+      operationId: assignArtifact
+      parameters:
+        - name: wizardId
+          in: path
+          description: Id of wizard to assign
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: artifactId
+          in: path
+          description: Id of artifact
+          required: true
+          schema:
+            type: string
+            example: '1250808601744904196'
+      responses:
+        200:
+          description: Artifact assigned to a wizard
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseArtifactAssignment'
+        404:
+          description: Artifact or wizard not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseArtifactNotFound'
+  /users:
+    get:
+      tags:
+        - user
+      summary: Find all users
+      description: Find all users and return them in an array.
+      operationId: findAllUsers
+      responses:
+        200:
+          description: All users found and returned
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseFindAllUsers'
+    post:
+      tags:
+        - user
+      summary: Add a user
+      description: Add a new user and return the saved one. Only users with admin role can perform this operation.
+      operationId: addUser
+      requestBody:
+        description: The new user
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/User'
+              example:
+                username: lily
+                password: ABCDEfghi123456*()
+                enabled: true
+                roles: user
+        required: true
+      responses:
+        200:
+          description: User added and returned
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseAddUser'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseUserPostBadRequest'
+      # security:
+      #   - petstore_auth:
+      #       - 'write:pets'
+      #       - 'read:pets'
+  /users/{userId}:
+    get:
+      tags:
+        - user
+      summary: Find a user by Id
+      description: Find a single user and return it.
+      operationId: findUserById
+      parameters:
+        - name: userId
+          in: path
+          description: Id of user to return
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        200:
+          description: User found and returned
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseFindOneUser'
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseUserNotFound'
+    put:
+      tags:
+        - user
+      summary: Update a user
+      description: Update an exisiting user and return the updated one. Only users with admin role can perform this operation.
+      operationId: updateUser
+      parameters:
+        - name: userId
+          in: path
+          description: Id of user to update
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        description: The user with updated info
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/UserEditableFields'
+              example:
+                username: john-update
+                enabled: true
+                roles: admin user
+        required: true
+      responses:
+        200:
+          description: User updated and returned
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseUpdateUser'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseUserPutBadRequest'
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseUserNotFound'
+    delete:
+      tags:
+        - user
+      summary: Delete a user
+      description: Delete a single user. Only users with admin role can perform this operation.
+      operationId: deleteUser
+      parameters:
+        - name: userId
+          in: path
+          description: Id of user to delete
+          required: true
+          schema:
+            type: integer
+            example: 3
+      responses:
+        200:
+          description: User deleted
+          # headers:
+          #   ETag:
+          #     description: An Id for this version of the response
+          #     schema:
+          #       type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseDelete'
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseUserNotFound'
+
+  /users/login:
+    post:
+      tags:
+        - user
+      summary: Log user into the system
+      description: Use HTTP basic authentication to log in users and then return
+      operationId: login
+      parameters:
+        - name: username
+          in: query
+          description: The username for login
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password for login in (clear text)
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User logged in
+          # headers:
+          #   X-Rate-Limit:
+          #     description: Calls per hour allowed by the user
+          #     schema:
+          #       type: integer
+          #   X-Expires-After:
+          #     description: Date in UTC when token expires
+          #     schema:
+          #       type: string
+          #       format: date-time
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseToken'
+        401:
+          description: Bad credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseBadCredentials'
+      security:
+        - BasicAuth: []
+externalDocs:
+  description: Find out more
+  url: http://swagger.io
+components:
+  schemas:
+    Artifact:
+      title: Artifact
+      description: An artifact
+      type: object
+      properties:
+        id:
+          title: Id
+          description: Id of the artifact
+          type: string
+          example: '1250808601744904191'
+          readOnly: true
+        name:
+          title: Artifact name
+          description: Name of the artifact
+          type: string
+          example: Deluminator
+        description:
+          title: Artifact description
+          description:  Description of the artifact
+          type: string
+          example: A Deluminator is a device invented by Albus Dumbledore that resembles a cigarette lighter. It is used to remove or absorb (as well as return) the light from any light source to provide cover to the user.
+        imageUrl:
+          title: Artifact image url
+          description: Url of the image of the artifact
+          type: string
+          example: ImageUrl
+        owner:
+          allOf:
+            - $ref: '#/components/schemas/Wizard'
+            - example:
+                id: 1
+                name: Albus Dumbledore
+                numberOfArtifacts: 2
+            - readOnly: true
+      required:
+        - id
+        - name
+        - description
+        - imageUrl
+    Wizard:
+      title: Wizard
+      description: A wizard
+      type: object
+      properties:
+        id:
+          title: Id
+          description: Id of the wizard
+          type: integer
+          minimum: 1
+          example: 2
+          readOnly: true
+        name:
+          title: Wizard name
+          description: Name of the wizard
+          type: string
+          example: Harry Potter
+        numberOfArtifacts:
+          title: Number of artifacts
+          description: Number of artifacts owned by the wizard
+          type: integer
+          example: 2
+          readOnly: true
+      required:
+        - id
+        - name
+    User:
+      title: User
+      description: A user
+      allOf: # inheritance and composition
+        - $ref: '#/components/schemas/UserEditableFields'
+        - type: object
+          properties:
+            id:
+              title: Id
+              description: Id of the user
+              type: integer
+              minimum: 1
+              example: 1
+              readOnly: true
+            password:
+              title: Password
+              description: Password of the user
+              type: string
+              minLength: 8
+              maxLength: 30
+              pattern: ^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$
+              example: ABCDEfghi123456*()
+              writeOnly: true
+          required:
+            - id
+            - password
+    UserEditableFields:
+      title: User fields
+      description: Editable fields of the user, used to update the user
+      type: object
+      properties:
+        username:
+          title: Username
+          description: Username of the user
+          type: string
+          minLength: 1
+          maxLength: 30
+          pattern: ^[a-zA-Z0-9]([._-](?![._-])|[a-zA-Z0-9]){3,18}[a-zA-Z0-9]$
+          example: john
+        enabled:
+          title: User account status
+          description: Status of the user
+          type: boolean
+          example: true
+        roles:
+          title: User roles
+          description: Roles of the user
+          type: string
+          example: admin user
+      required:
+        - username
+        - enabled
+        - roles
+    ArtifactList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Artifact'
+      example:
+        - id: '1250808601744904191'
+          name: Deluminator
+          description: A Deluminator is a device invented by Albus Dumbledore that resembles a cigarette lighter. It is used to remove or absorb (as well as return) the light from any light source to provide cover to the user.
+          imageUrl: ImageUrl
+          owner:
+            id: 1
+            name: Albus Dumbledore
+            numberOfArtifacts: 2
+        - id: '1250808601744904192'
+          name: Invisibility Cloak
+          description: An invisibility cloak is used to make the wearer invisible.
+          imageUrl: ImageUrl
+          owner:
+            id: 2
+            name: Harry Potter
+            numberOfArtifacts: 2
+        - id: '1250808601744904193'
+          name: Elder Wand
+          description: The Elder Wand, known throughout history as the Deathstick or the Wand of Destiny, is an extremely powerful wand made of elder wood with a core of Thestral tail hair.
+          imageUrl: ImageUrl
+          owner:
+            id: 1
+            name: Albus Dumbledore
+            numberOfArtifacts: 2
+        - id: '1250808601744904194'
+          name: The Marauder's Map
+          description: A magical map of Hogwarts created by Remus Lupin, Peter Pettigrew, Sirius Black, and James Potter while they were students at Hogwarts.
+          imageUrl: ImageUrl
+          owner:
+            id: 2
+            name: Harry Potter
+            numberOfArtifacts: 2
+        - id: '1250808601744904195'
+          name: The Sword Of Gryffindor
+          description: A goblin-made sword adorned with large rubies on the pommel. It was once owned by Godric Gryffindor, one of the medieval founders of Hogwarts.
+          imageUrl: ImageUrl
+          owner:
+            id: 3
+            name: Neville Longbottom
+            numberOfArtifacts: 1
+        - id: '1250808601744904196'
+          name: Resurrection Stone
+          description: The Resurrection Stone allows the holder to bring back deceased loved ones, in a semi-physical form, and communicate with them.
+          imageUrl: ImageUrl
+          owner: null
+    WizardList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Wizard'
+      example:
+        - id: 1
+          name: Albus Dumbledore
+          numberOfArtifacts: 2
+        - id: 2
+          name: Harry Potter
+          numberOfArtifacts: 2
+        - id: 3
+          name: Neville Longbottom
+          numberOfArtifacts: 1
+    UserList:
+      type: array
+      items:
+        $ref: '#/components/schemas/User'
+      example:
+        - id: 1
+          username: john
+          enabled: true
+          roles: admin user
+        - id: 2
+          username: eric
+          enabled: true
+          roles: user
+        - id: 3
+          username: tom
+          enabled: false
+          roles: user
+    ApiResponseAddArtifact:
+      title: API response for add artifact
+      type: object
+      properties:
+        flag:
+          type: boolean
+          description: Success or not
+        code:
+          type: integer
+          description: Return code
+          example: 200
+        message:
+          type: string
+          example: Add Success
+        data:
+          allOf: # inheritance and composition
+            - $ref: '#/components/schemas/Artifact'
+          example:
+            id: '1250808601744904197'
+            name: Remembrall
+            description: A Remembrall was a magical large marble-sized glass ball that contained smoke which turned red when its owner or user had forgotten something. It turned clear once whatever was forgotten was remembered.
+            imageUrl: ImageUrl
+            owner: null
+    ApiResponseAddWizard:
+      title: API response for add wizard
+      type: object
+      properties:
+        flag:
+          type: boolean
+          description: Success or not
+        code:
+          type: integer
+          description: Return code
+          example: 200
+        message:
+          type: string
+          example: Add Success
+        data:
+          allOf: # inheritance and composition
+            - $ref: '#/components/schemas/Wizard'
+          example:
+            id: 4
+            name: Hermione Granger
+            numberOfArtifacts: 0
+    ApiResponseAddUser:
+      title: API response for add user
+      type: object
+      properties:
+        flag:
+          type: boolean
+          description: Success or not
+        code:
+          type: integer
+          description: Return code
+          example: 200
+        message:
+          type: string
+          example: Add Success
+        data:
+          allOf: # inheritance and composition
+            - $ref: '#/components/schemas/User'
+          example:
+            id: 4
+            username: lily
+            enabled: true
+            roles: user
+    ApiResponseUpdateArtifact:
+      title: API response for update artifact
+      type: object
+      properties:
+        flag:
+          type: boolean
+          description: Success or not
+        code:
+          type: integer
+          description: Return code
+          example: 200
+        message:
+          type: string
+          example: Update Success
+        data:
+          allOf: # inheritance and composition
+            - $ref: '#/components/schemas/Artifact'
+          example:
+            id: '1250808601744904191'
+            name: Deluminator-update
+            description: A Deluminator is a device invented by Albus Dumbledore that resembles a cigarette lighter. It is used to remove or absorb (as well as return) the light from any light source to provide cover to the user.-update
+            imageUrl: ImageUrl-update
+            owner:
+              id: 1
+              name: Albus Dumbledore
+              numberOfArtifacts: 2
+    ApiResponseUpdateWizard:
+      title: API response for update wizard
+      type: object
+      properties:
+        flag:
+          type: boolean
+          description: Success or not
+        code:
+          type: integer
+          description: Return code
+          example: 200
+        message:
+          type: string
+          example: Update Success
+        data:
+          allOf: # inheritance and composition
+            - $ref: '#/components/schemas/Wizard'
+          example:
+            id: 2
+            name: Harry Potter-update
+            numberOfArtifacts: 2
+    ApiResponseUpdateUser:
+      title: API response for update user
+      type: object
+      properties:
+        flag:
+          type: boolean
+          description: Success or not
+        code:
+          type: integer
+          description: Return code
+          example: 200
+        message:
+          type: string
+          example: Update Success
+        data:
+          allOf: # inheritance and composition
+            - $ref: '#/components/schemas/User'
+          example:
+            id: 1
+            username: john-update
+            enabled: true
+            roles: admin user
+    ApiResponseDelete:
+      title: API response for delete
+      type: object
+      properties:
+        flag:
+          type: boolean
+          description: Success or not
+        code:
+          type: integer
+          description: Return code
+          example: 200
+        message:
+          type: string
+          example: Delete Success
+        data:
+          type: object
+          example: null
+    ApiResponseArtifactAssignment:
+      title: API response for artifact assignment
+      type: object
+      properties:
+        flag:
+          type: boolean
+          description: Success or not
+        code:
+          type: integer
+          description: Return code
+          example: 200
+        message:
+          type: string
+          example: Artifact Assignment Success
+        data:
+          type: object
+          example: null
+    ApiResponseFindAllArtifacts:
+      title: API response for find all artifacts
+      type: object
+      properties:
+        flag:
+          type: boolean
+          description: Success or not
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Find All Success
+        data:
+          $ref: '#/components/schemas/ArtifactList'
+    ApiResponseFindAllWizards:
+      title: API response for find all wizards
+      type: object
+      properties:
+        flag:
+          type: boolean
+          description: Success or not
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Find All Success
+        data:
+          $ref: '#/components/schemas/WizardList'
+    ApiResponseFindAllUsers:
+      title: API response for find all users
+      type: object
+      properties:
+        flag:
+          type: boolean
+          description: Success or not
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Find All Success
+        data:
+          $ref: '#/components/schemas/UserList'
+    ApiResponseFindOneArtifact:
+      title: API response for find one artifact
+      type: object
+      properties:
+        flag:
+          type: boolean
+          description: Success or not
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Find One Success
+        data:
+          allOf: # inheritance and composition
+            - $ref: '#/components/schemas/Artifact'
+          example:
+            id: '1250808601744904192'
+            name: Invisibility Cloak
+            description: An invisibility cloak is used to make the wearer invisible.
+            imageUrl: ImageUrl
+            owner:
+              id: 2
+              name: Harry Potter
+              numberOfArtifacts: 2
+    ApiResponseFindOneWizard:
+      title: API response for find one wizard
+      type: object
+      properties:
+        flag:
+          type: boolean
+          description: Success or not
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Find One Success
+        data:
+          allOf: # inheritance and composition
+            - $ref: '#/components/schemas/Wizard'
+          example:
+            id: 1
+            name: Albus Dumbledore
+            numberOfArtifacts: 2
+    ApiResponseFindOneUser:
+      title: API response for find one user
+      type: object
+      properties:
+        flag:
+          type: boolean
+          description: Success or not
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Find One Success
+        data:
+          allOf: # inheritance and composition
+            - $ref: '#/components/schemas/User'
+          example:
+            id: 2
+            username: eric
+            enabled: true
+            roles: user
+    ApiResponseToken:
+      title: API response for successful login
+      type: object
+      properties:
+        flag:
+          type: boolean
+          description: Success or not
+          example: true
+        code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: User Info and JSON Web Token
+        data:
+          $ref: '#/components/schemas/UserInfoAndToken'
+
+    UserInfoAndToken:
+      title: User information and JWT
+      description: Information about the logged-in user and the JSON web token
+      properties:
+        userInfo:
+          $ref: '#/components/schemas/User'
+        token:
+          type: string
+          example: eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiam9obiIsImV4cCI6MTY3NDc5NTc1MSwiaWF0IjoxNjc0NzA5MzUxLCJhdXRob3JpdGllcyI6ImFkbWluIHVzZXIifQ.ZaXHGocHD0-HtcmTdflOVaf2-FWUTE7y65VS-Tzli5gaIGKCEjbDCu2n-p10a0DqdunnJBwGnvMB1XGwPNL-6JWr5ECOVOGH8N3H_Wc1j3nItIX2P4voh0cegw1JNyJcGwdBCLdquGQtW2dLMCV_c4peSoQ8UwHdlvABxsBSuUVy7cyiF_vgFDR0M8nNmePJATuroani61TjNxbnSz09WDUZOYxLujxBH27tdYXiVv5JMGVp4ZkyhrRx-bf8_vEryq3HeqztHGrgtKDH7FJbeWvnI4CmNuxvU_AdEjhXyUADLdz-eO3tc8hje1R4kBWnfpX3Mxdj1ZLxo_bvDYrN1A
+
+    ApiResponseArtifactBadRequest:
+      title: API response for bad request error
+      description: The schema for bad request error
+      type: object
+      properties:
+        flag:
+          title: flag
+          description: Success or not
+          type: boolean
+          example: false
+          readOnly: true
+        code:
+          title: Http status code
+          description: Http status code
+          type: integer
+          example: 400
+          readOnly: true
+        message:
+          title: Message
+          description: The long error message
+          type: string
+          example: Provided arguments are invalid, see data for details.
+          readOnly: true
+        data:
+          $ref: '#/components/schemas/ArtifactBadRequest'
+    ArtifactBadRequest:
+      title: Artifact bad request
+      description: Messages describing a bad request error
+      type: object
+      properties:
+        name:
+          title: Name of the artifact
+          description: The error message
+          type: string
+          example: name is required.
+        description:
+          title: Description of the artifact
+          description: The error message
+          type: string
+          example: description is required.
+        imageUrl:
+          title: Image url of the artifact
+          description: The error message
+          type: string
+          example: imageUrl is required.
+    ApiResponseArtifactNotFound:
+      title: API response for not found error
+      description: The schema for bad request error
+      type: object
+      properties:
+        flag:
+          title: flag
+          description: Success or not
+          type: boolean
+          example: false
+          readOnly: true
+        code:
+          title: Http status code
+          description: Http status code
+          type: integer
+          example: 404
+          readOnly: true
+        message:
+          title: Message
+          description: The long error message
+          type: string
+          example: Could not find artifact with Id 1250808601744904199 :(
+          readOnly: true
+        data:
+          type: object
+          example: null
+    ApiResponseWizardBadRequest:
+      title: API response for bad request error
+      description: The schema for bad request error
+      type: object
+      properties:
+        flag:
+          title: flag
+          description: Success or not
+          type: boolean
+          example: false
+          readOnly: true
+        code:
+          title: Http status code
+          description: Http status code
+          type: integer
+          example: 400
+          readOnly: true
+        message:
+          title: Message
+          description: The long error message
+          type: string
+          example: Provided arguments are invalid, see data for details.
+          readOnly: true
+        data:
+          $ref: '#/components/schemas/WizardBadRequest'
+    WizardBadRequest:
+      title: Wizard bad request
+      description: Messages describing a bad request error
+      type: object
+      properties:
+        name:
+          title: Name of the wizard
+          description: The error message
+          type: string
+          example: name is required.
+    ApiResponseWizardNotFound:
+      title: API response for not found error
+      description: The schema for bad request error
+      type: object
+      properties:
+        flag:
+          title: flag
+          description: Success or not
+          type: boolean
+          example: false
+          readOnly: true
+        code:
+          title: Http status code
+          description: Http status code
+          type: integer
+          example: 404
+          readOnly: true
+        message:
+          title: Message
+          description: The long error message
+          type: string
+          example: Could not find wizard with Id 9 :(
+          readOnly: true
+        data:
+          type: object
+          example: null
+    ApiResponseUserPostBadRequest:
+      title: API response for bad request error
+      description: The schema for bad request error
+      type: object
+      properties:
+        flag:
+          title: flag
+          description: Success or not
+          type: boolean
+          example: false
+          readOnly: true
+        code:
+          title: Http status code
+          description: Http status code
+          type: integer
+          example: 400
+          readOnly: true
+        message:
+          title: Message
+          description: The long error message
+          type: string
+          example: Provided arguments are invalid, see data for details.
+          readOnly: true
+        data:
+          $ref: '#/components/schemas/UserPostBadRequest'
+    UserPostBadRequest:
+      title: User Post bad request
+      description: Messages describing a bad request error
+      type: object
+      properties:
+        username:
+          title: Username of the user
+          description: The error message
+          type: string
+          example: username is required.
+        password:
+          title: User password
+          description: The error message
+          type: string
+          example: password is required.
+        roles:
+          title: User roles
+          description: The error message
+          type: string
+          example: roles are required.
+    ApiResponseUserPutBadRequest:
+      title: API response for bad request error
+      description: The schema for bad request error
+      type: object
+      properties:
+        flag:
+          title: flag
+          description: Success or not
+          type: boolean
+          example: false
+          readOnly: true
+        code:
+          title: Http status code
+          description: Http status code
+          type: integer
+          example: 400
+          readOnly: true
+        message:
+          title: Message
+          description: The long error message
+          type: string
+          example: Provided arguments are invalid, see data for details.
+          readOnly: true
+        data:
+          $ref: '#/components/schemas/UserPutBadRequest'
+    UserPutBadRequest:
+      title: User Put bad request
+      description: Messages describing a bad request error
+      type: object
+      properties:
+        username:
+          title: Username of the user
+          description: The error message
+          type: string
+          example: username is required.
+        roles:
+          title: User roles
+          description: The error message
+          type: string
+          example: roles are required.
+    ApiResponseUserNotFound:
+      title: API response for not found error
+      description: The schema for bad request error
+      type: object
+      properties:
+        flag:
+          title: flag
+          description: Success or not
+          type: boolean
+          example: false
+          readOnly: true
+        code:
+          title: Http status code
+          description: Http status code
+          type: integer
+          example: 404
+          readOnly: true
+        message:
+          title: Message
+          description: The long error message
+          type: string
+          example: Could not find user with Id 10 :(
+          readOnly: true
+        data:
+          type: object
+          example: null
+    ApiResponseBadCredentials:
+      title: API response for not found error
+      description: The schema for bad request error
+      type: object
+      properties:
+        flag:
+          title: flag
+          description: Success or not
+          type: boolean
+          example: false
+          readOnly: true
+        code:
+          title: Http status code
+          description: Http status code
+          type: integer
+          example: 401
+          readOnly: true
+        message:
+          title: Message
+          description: The long error message
+          type: string
+          example: username or password is incorrect.
+          readOnly: true
+        data:
+          type: object
+          example: Bad credentials
+  securitySchemes:
+    BasicAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: basic
+    BearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - BearerAuth: [] # secure all endpoints using JWT
