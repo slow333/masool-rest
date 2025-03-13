@@ -16,6 +16,7 @@
 4. git pull // remote와 동기화
 5. git switch wiz-crud
 6. git push --set-upstream origin artifact-crud // gitdp branch를 올림
+7. git merge main  // 이거 해야함
 ## git hub로 이동해서
 1. 이슈 완료를 체크 
 - 신규 branch가 생성되어 있음
@@ -23,5 +24,5 @@
 3. merge 수행
 - 이렇게 하면 main과 통합됨
 ## local로 이동(인텔리제이)
-1. git siwtch main
+1. git switch main
 2. git pull // remote에서 통합한 main을 받음
