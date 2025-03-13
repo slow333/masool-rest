@@ -1,9 +1,7 @@
 package ma.sool.system.exception;
 
-import ma.sool.art.ArtNotFoundException;
 import ma.sool.system.Result;
 import ma.sool.system.StatusCode;
-import ma.sool.wiz.WizNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -19,9 +17,9 @@ import java.util.Map;
 @RestControllerAdvice
 public class ExceptionHandlerAdvice {
 
-  @ExceptionHandler({ArtNotFoundException.class, WizNotFoundException.class})
+  @ExceptionHandler(ObjectNotFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  Result handleArtNotFoundException(Exception ex) {
+  Result handleObjectNotFoundException(ObjectNotFoundException ex) {
     return new Result(false, StatusCode.NOT_FOUND, ex.getMessage());
   }
 

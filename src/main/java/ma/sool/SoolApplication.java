@@ -16,5 +16,4 @@ public class SoolApplication {
 	public IdWorker idWorker(){
 		return new IdWorker(1, 1);
 	}
-
 }

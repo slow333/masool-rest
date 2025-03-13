@@ -7,6 +7,7 @@ import ma.sool.art.Art;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Getter
 @Setter
@@ -32,4 +33,9 @@ public class Wiz implements Serializable {
   public Integer getNumberOfArts(){
     return arts.size();
   };
+
+  public void removeAllArt() {
+    arts.stream().forEach(art -> art.setOwner(null));
+    arts = null;
+  }
 }

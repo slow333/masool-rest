@@ -1,6 +1,7 @@
 package ma.sool.art;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import ma.sool.system.converter.ArtToDtoConverter;
 import ma.sool.system.Result;
 import ma.sool.system.StatusCode;
@@ -12,17 +13,12 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("${api.base-url}/arts")
+@RequiredArgsConstructor
 public class ArtController {
 
   private final ArtService artService;
   private final ArtToDtoConverter artToDtoConverter;
   private final ArtToEntityConverter artToEntityConverter;
-
-  public ArtController(ArtService artService, ArtToDtoConverter artToDtoConverter, ArtToEntityConverter artToEntityConverter) {
-    this.artService = artService;
-    this.artToDtoConverter = artToDtoConverter;
-    this.artToEntityConverter = artToEntityConverter;
-  }
 
   @GetMapping("/{artId}")
   public Result getArtById(@PathVariable String artId) {
@@ -32,7 +28,7 @@ public class ArtController {
   }
 
   @GetMapping
-  public Result getArtAll(){
+  public Result getArtAll() {
     List<Art> arts = artService.findAll();
     List<ArtDto> artDtos = arts.stream().map(artToDtoConverter::convert).toList();
     return new Result(true, StatusCode.SUCCESS, "Find All", artDtos);
@@ -54,4 +50,9 @@ public class ArtController {
     return new Result(true, StatusCode.SUCCESS, "Update Success", convertedArtDto);
   }
 
+  @DeleteMapping("/{artId}")
+  public Result deleteArt(@PathVariable String artId) {
+    artService.deleteArt(artId);
+    return new Result(true, StatusCode.SUCCESS, "Delete Success");
+  }
 }

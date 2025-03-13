@@ -1,13 +1,16 @@
 package ma.sool.wiz;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ma.sool.art.Art;
-import ma.sool.art.ArtNotFoundException;
 import ma.sool.system.StatusCode;
+import ma.sool.system.exception.ObjectNotFoundException;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,13 +18,16 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
@@ -32,6 +38,12 @@ class WizControllerTest {
   MockMvc mockMvc;
   @MockBean
   WizService wizService;
+
+  @Autowired
+  ObjectMapper objectMapper;
+
+  @Value("${api.base-url}")
+  String baseUrl;
 
   List<Wiz> wizs;
 
@@ -76,7 +88,6 @@ class WizControllerTest {
     this.wizs = new ArrayList<>();
 
     Wiz w1 = new Wiz();
-
     w1.setId(1);
     w1.setName("Albus Dumbledore");
     w1.addArt(a1);
@@ -106,7 +117,7 @@ class WizControllerTest {
     // given
     given(wizService.findById(3)).willReturn(wizs.get(2));
     // when and then
-    mockMvc.perform(get("/api/v1/wizs/2").accept(MediaType.APPLICATION_JSON))
+    mockMvc.perform(get(baseUrl+"/wizs/3").accept(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.flag").value(true))
             .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
             .andExpect(jsonPath("$.message").value("Find One Success"))
@@ -118,13 +129,115 @@ class WizControllerTest {
   @Test
   void findWizByIdNotFound() throws Exception {
     // given
-      given(wizService.findById(Mockito.anyInt())).willThrow(new WizNotFoundException(2));
+      given(wizService.findById(Mockito.anyInt())).willThrow(new ObjectNotFoundException("wiz", 2));
     // when and then
-    mockMvc.perform(get("/api/v1/wizs/2")
+    mockMvc.perform(get(baseUrl + "/wizs/2")
                     .accept(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.flag").value(false))
             .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
             .andExpect(jsonPath("$.message").value("Could not find wiz with Id 2"))
             .andExpect(jsonPath("$.data").isEmpty());
   }
+  @Test
+  void FindAllSuccess() throws Exception {
+    // Given
+    given(wizService.findAll()).willReturn(wizs);
+    // When and Then
+    mockMvc.perform(get(baseUrl + "/wizs").accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(true))
+            .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+            .andExpect(jsonPath("$.message").value("Find all Success"))
+            .andExpect(jsonPath("$.data", Matchers.hasSize(wizs.size())));
+  }
+  @Test
+  void testAddWizSuccess() throws Exception {
+    // Given
+    WizDto dto = new WizDto(33, "Neville ADD", null);
+    String json = objectMapper.writeValueAsString(dto);
+
+    Wiz w3 = new Wiz();
+    w3.setId(33);
+    w3.setName("Neville ADD");
+
+    given(wizService.saveWiz(w3)).willReturn(w3);
+    // When and Then
+    mockMvc.perform(post(baseUrl + "/wizs")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json)
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(true))
+            .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+            .andExpect(jsonPath("$.message").value("Add Success"))
+            .andExpect(jsonPath("$.data.id").value(33))
+            .andExpect(jsonPath("$.data.name").value("Neville ADD"))
+    ;
+  }
+  @Test
+  void testUpdateSuccess() throws Exception {
+    // Given
+    WizDto oldDto = new WizDto(1, "Albus Dumbledore", null);
+    String json = objectMapper.writeValueAsString(oldDto);
+
+    Wiz update = new Wiz();
+    update.setId(1);
+    update.setName("Albus UPDATE");
+    given(wizService.updateWiz(eq(1), Mockito.any(Wiz.class))).willReturn(update);
+
+    // When and Then
+    mockMvc.perform(put(baseUrl + "/wizs/1")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json)
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(true))
+            .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+            .andExpect(jsonPath("$.message").value("Update Success"))
+            .andExpect(jsonPath("$.data.id").value(update.getId()))
+            .andExpect(jsonPath("$.data.name").value(update.getName()))
+    ;  }
+
+  @Test
+  void testUpdateNotFound() throws Exception {
+    // Given
+    WizDto oldDto = new WizDto(1, "Albus Dumbledore", null);
+    String json = objectMapper.writeValueAsString(oldDto);
+
+    given(wizService.updateWiz(eq(1), Mockito.any(Wiz.class))).willThrow(new ObjectNotFoundException("wiz", 1));
+
+    // When and Then
+    mockMvc.perform(put(baseUrl + "/wizs/1")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(json)
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(false))
+            .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
+            .andExpect(jsonPath("$.message").value("Could not find wiz with Id 1"))
+            .andExpect(jsonPath("$.data").isEmpty())
+    ;  }
+  @Test
+  void testDeleteSuccess() throws Exception {
+    // given
+    doNothing().when(this.wizService).deleteWiz(2);
+
+    // When and Then
+    mockMvc.perform(delete(baseUrl+"/wizs/2")
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(true))
+            .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+            .andExpect(jsonPath("$.message").value("Delete Success"))
+            .andExpect(jsonPath("$.data").isEmpty());
+  }
+  @Test
+  void testDeleteErrorWithId() throws Exception {
+    // given
+    doThrow(new ObjectNotFoundException("wiz", 2)).when(this.wizService).deleteWiz(2);
+
+    // When and Then
+    mockMvc.perform(delete(baseUrl+"/wizs/2")
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(false))
+            .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
+            .andExpect(jsonPath("$.message").value("Could not find wiz with Id 2"))
+            .andExpect(jsonPath("$.data").isEmpty());
+  }
+
 }
