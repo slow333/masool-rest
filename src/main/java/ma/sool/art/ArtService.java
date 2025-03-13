@@ -1,8 +1,10 @@
 package ma.sool.art;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import ma.sool.system.IdWorker;
 import ma.sool.system.converter.ArtToDtoConverter;
+import ma.sool.system.exception.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,20 +12,15 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class ArtService {
 
   private final ArtRepo artRepo;
   private final IdWorker idWorker;
   private final ArtToDtoConverter artToDtoConverter;
-
-  public ArtService(ArtRepo artRepo, IdWorker idWorker, ArtToDtoConverter artToDtoConverter) {
-    this.artRepo = artRepo;
-    this.idWorker = idWorker;
-    this.artToDtoConverter = artToDtoConverter;
-  }
-
+  
   public Art findById(String artId) {
-    return artRepo.findById(artId).orElseThrow(() -> new ArtNotFoundException(artId));
+    return artRepo.findById(artId).orElseThrow(() -> new ObjectNotFoundException("art", artId));
   }
 
   public List<Art> findAll() {
@@ -42,6 +39,11 @@ public class ArtService {
       oldArt.setDescription(newArt.getDescription());
       oldArt.setImgUrl(newArt.getImgUrl());
       return artRepo.save(oldArt);
-    }).orElseThrow(() -> new ArtNotFoundException(artId));
+    }).orElseThrow(() -> new ObjectNotFoundException("art", artId));
+  }
+
+  public void deleteArt(String artId) {
+    artRepo.findById(artId).orElseThrow(() -> new ObjectNotFoundException("art", artId));
+    artRepo.deleteById(artId);
   }
 }

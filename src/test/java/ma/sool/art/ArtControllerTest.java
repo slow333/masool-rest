@@ -2,6 +2,7 @@ package ma.sool.art;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ma.sool.system.StatusCode;
+import ma.sool.system.exception.ObjectNotFoundException;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,15 +18,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.mockito.ArgumentMatchers.eq;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
@@ -110,7 +111,7 @@ class ArtControllerTest {
   @Test
   void testGetArtByIdNotFound() throws Exception {
     //given
-    given(artService.findById("1250808601744904196")).willThrow(new ArtNotFoundException("1250808601744904196"));
+    given(artService.findById("1250808601744904196")).willThrow(new ObjectNotFoundException("art", "1250808601744904196"));
     //when and then
     mockMvc.perform(get(baseUrl+"/arts/1250808601744904196")
                     .accept(MediaType.APPLICATION_JSON))
@@ -158,7 +159,7 @@ class ArtControllerTest {
   }
   @Test
   void testUpdateArtSuccess() throws Exception {
-    ArtDto artDto = new ArtDto("1250808601744904192", "Invisibility Cloak", "An invisibility cloak is used to make the wearer invisible.", "imageUrl", null);
+    ArtDto artDto = new ArtDto("1250808601744904191", "Invisibility Cloak", "An invisibility cloak is used to make the wearer invisible.", "imageUrl", null);
 
     String json = objectMapper.writeValueAsString(artDto);
     Art art = new Art();
@@ -185,7 +186,8 @@ class ArtControllerTest {
     ArtDto artDto = new ArtDto("1250808601744904192", "Invisibility Cloak", "An invisibility cloak is used to make the wearer invisible.", "imageUrl", null);
 
     String json = objectMapper.writeValueAsString(artDto);
-    given(artService.updateArt(eq("1250808601744904192"), Mockito.any(Art.class))).willThrow(new ArtNotFoundException("1250808601744904192"));
+    given(artService.updateArt(eq("1250808601744904192"), Mockito.any(Art.class)))
+            .willThrow(new ObjectNotFoundException("art","1250808601744904192"));
     //when and then
     mockMvc.perform(put(baseUrl+"/arts/1250808601744904192")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -193,6 +195,33 @@ class ArtControllerTest {
             .andExpect(jsonPath("$.flag").value(false))
             .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
             .andExpect(jsonPath("$.message").value("Could not find art with Id 1250808601744904192"))
+            .andExpect(jsonPath("$.data").isEmpty());
+  }
+  @Test
+  void testDeleteSuccess() throws Exception {
+    // Given
+    doNothing().when(this.artService).deleteArt("1250808601744904191");
+
+    // When and Then
+    mockMvc.perform(delete(baseUrl+"/arts/1250808601744904191")
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(true))
+            .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+            .andExpect(jsonPath("$.message").value("Delete Success"))
+            .andExpect(jsonPath("$.data").isEmpty());
+  }
+  @Test
+  void testDeleteNotFound() throws Exception {
+    // Given
+    doThrow(new ObjectNotFoundException("art", "1250808601744904191"))
+            .when(this.artService).deleteArt("1250808601744904191");
+
+    // When and Then
+    mockMvc.perform(delete(baseUrl+"/arts/1250808601744904191")
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(false))
+            .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
+            .andExpect(jsonPath("$.message").value("Could not find art with Id 1250808601744904191"))
             .andExpect(jsonPath("$.data").isEmpty());
   }
 }

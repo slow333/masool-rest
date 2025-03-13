@@ -1,11 +1,13 @@
 package ma.sool.art;
 
 import ma.sool.system.IdWorker;
+import ma.sool.system.exception.ObjectNotFoundException;
 import ma.sool.wiz.Wiz;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -19,8 +21,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ArtServiceTest {
@@ -88,7 +89,7 @@ class ArtServiceTest {
     });
     //then
     assertThat(thrown)
-            .isInstanceOf(ArtNotFoundException.class)
+            .isInstanceOf(ObjectNotFoundException.class)
             .hasMessage("Could not find art with Id 1250808601744904192");
     verify(artRepo, times(1)).findById("1250808601744904192");
   }
@@ -155,10 +156,47 @@ class ArtServiceTest {
     update.setImgUrl("ImageUrl");
     given(artRepo.findById("1250808601744904191")).willReturn(Optional.empty());
     // When
-    assertThrows(ArtNotFoundException.class, () -> {
+    assertThrows(ObjectNotFoundException.class, () -> {
       artService.updateArt("1250808601744904191", update);
     });
     // Then
     verify(artRepo, times(1)).findById("1250808601744904191");
   }
+  @Test
+  void testDeleteSuccess() {
+    // Given
+    Art art = new Art();
+    art.setId("1250808601744904191");
+    art.setName("Deluminator");
+    art.setDescription("A Deluminator is UPDATE");
+    art.setImgUrl("ImageUrl");
+
+    given(artRepo.findById("1250808601744904191")).willReturn(Optional.of(art));
+    doNothing().when(this.artRepo).deleteById("1250808601744904191");
+    // when
+    artService.deleteArt("1250808601744904191");
+
+    // Then
+    verify(artRepo, times(1)).findById("1250808601744904191");
+    verify(artRepo, times(1)).deleteById("1250808601744904191");
+  }
+  @Test
+  void testDeleteNotFound() {
+    // Given
+    Art art = new Art();
+    art.setId("1250808601744904191");
+    art.setName("Deluminator");
+    art.setDescription("A Deluminator is UPDATE");
+    art.setImgUrl("ImageUrl");
+
+    given(artRepo.findById("1250808601744904191")).willReturn(Optional.empty());
+    // when
+    assertThrows(ObjectNotFoundException.class, () -> {
+      artService.deleteArt("1250808601744904191");
+    });
+
+    // Then
+    verify(artRepo, times(1)).findById("1250808601744904191");
+  }
+
 }
