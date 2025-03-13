@@ -35,7 +35,7 @@ public class Wiz implements Serializable {
   };
 
   public void removeAllArt() {
-    arts.stream().forEach(art -> art.setOwner(null));
+    arts.forEach(art -> art.setOwner(null));
     arts = null;
   }
 }
