@@ -1,6 +1,10 @@
 package ma.sool.wiz;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.el.MethodNotFoundException;
+import ma.sool.art.Art;
+import ma.sool.art.ArtRepo;
 import ma.sool.system.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +30,12 @@ class WizServiceTest {
 
   @Mock
   WizRepo wizRepo;
+  @Mock
+  ArtRepo artRepo;
   @InjectMocks
   WizService wizService;
+  @Autowired
+  ObjectMapper objectMapper;
 
   List<Wiz> wizs=new ArrayList<>();
 
@@ -158,5 +167,76 @@ class WizServiceTest {
     });
     // Then
     verify(wizRepo, times(1)).findById(2);
+  }
+  @Test
+  void testChangeArtOwnerSuccess() throws JsonProcessingException {
+    // Given
+    Art assignArt = new Art();
+    assignArt.setId("1250808601744904192");
+    assignArt.setName("Invisibility Cloak");
+    assignArt.setDescription("An invisibility cloak is used to make the wearer invisible.");
+    assignArt.setImgUrl("ImageUrl");
+
+    Wiz oldWiz = new Wiz();
+    oldWiz.setName("Albus Dumbledore");
+    oldWiz.setId(1);
+    oldWiz.addArt(assignArt);
+
+    Wiz newWiz = new Wiz();
+    newWiz.setId(2);
+    newWiz.setName("Harry Potter");
+
+//    String newWizJsonString = objectMapper.writeValueAsString(newWiz);
+    given(wizRepo.findById(2)).willReturn(Optional.of(newWiz));
+    given(artRepo.findById("1250808601744904192")).willReturn(Optional.of(assignArt));
+
+    // When
+    wizService.changeArtOwner(2, "1250808601744904192");
+    // Then
+    assertThat(assignArt.getOwner().getId()).isEqualTo(2);
+    assertThat(newWiz.getArts()).contains(assignArt);
+    verify(wizRepo, times(1)).findById(2);
+  }
+
+  @Test
+  void testChangeArtOwnerNoWidzId() throws JsonProcessingException {
+    // Given
+    Art assignArt = new Art();
+    assignArt.setId("1250808601744904192");
+    assignArt.setName("Invisibility Cloak");
+    assignArt.setDescription("An invisibility cloak is used to make the wearer invisible.");
+    assignArt.setImgUrl("ImageUrl");
+
+    Wiz oldWiz = new Wiz();
+    oldWiz.setName("Albus Dumbledore");
+    oldWiz.setId(1);
+    oldWiz.addArt(assignArt);
+
+    given(artRepo.findById("1250808601744904192")).willReturn(Optional.of(assignArt));
+    given(wizRepo.findById(2)).willReturn(Optional.empty());
+
+    // When
+    Throwable thrown = assertThrows(ObjectNotFoundException.class, () ->{
+      wizService.changeArtOwner(2, "1250808601744904192");
+    });
+    // Then
+    assertThat(thrown).isInstanceOf(ObjectNotFoundException.class)
+            .hasMessage("Could not find wiz with Id 2");
+    assertThat(assignArt.getOwner().getId()).isEqualTo(1);
+  }
+
+  @Test
+  void testChangeArtOwnerWithNoArtId() throws JsonProcessingException {
+    // Given
+    given(artRepo.findById("1250808601744904192")).willReturn(Optional.empty());
+
+    // When
+    Throwable thrown = assertThrows(ObjectNotFoundException.class, () ->{
+      wizService.changeArtOwner(2, "1250808601744904192");
+    });
+    // Then
+    assertThat(thrown)
+            .isInstanceOf(ObjectNotFoundException.class)
+            .hasMessage("Could not find art with Id 1250808601744904192");
   }
 }
