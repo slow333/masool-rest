@@ -3,10 +3,14 @@ package ma.sool.system;
 import lombok.RequiredArgsConstructor;
 import ma.sool.art.Art;
 import ma.sool.art.ArtRepo;
+import ma.sool.hoguser.HogUser;
+import ma.sool.hoguser.UserRepo;
 import ma.sool.wiz.Wiz;
 import ma.sool.wiz.WizRepo;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 
 @Component
 @RequiredArgsConstructor
@@ -14,6 +18,7 @@ public class DBDataInitializer implements CommandLineRunner {
 
   private final ArtRepo artRepo;
   private final WizRepo wizRepo;
+  private final UserRepo userRepo;
 
   @Override
   public void run(String... args) throws Exception {
@@ -70,10 +75,42 @@ public class DBDataInitializer implements CommandLineRunner {
     w3.setName("Neville Longbottom");
     w3.addArt(a5);
 
+    HogUser u1 = new HogUser();
+    u1.setId(1L);
+    u1.setUsername("kim");
+    u1.setPassword("123");
+    u1.setEnabled(true);
+    u1.setRoles("admin user");
+
+    HogUser u2 = new HogUser();
+    u2.setId(2L);
+    u2.setUsername("woo");
+    u2.setPassword("321");
+    u2.setEnabled(true);
+    u2.setRoles("user");
+
+    HogUser u3 = new HogUser();
+    u3.setId(3L);
+    u3.setUsername("jin");
+    u3.setPassword("321");
+    u3.setEnabled(true);
+    u3.setRoles("user");
+
+    HogUser u4 = new HogUser();
+    u4.setId(4L);
+    u4.setUsername("dong");
+    u4.setPassword("321");
+    u4.setEnabled(false);
+    u4.setRoles("user");
+
     wizRepo.save(w1);
     wizRepo.save(w2);
     wizRepo.save(w3);
 
     artRepo.save(a6);
+    userRepo.save(u1);
+    userRepo.save(u2);
+    userRepo.save(u3);
+    userRepo.save(u4);
   }
 }
