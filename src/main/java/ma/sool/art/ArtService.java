@@ -43,7 +43,8 @@ public class ArtService {
   }
 
   public void deleteArt(String artId) {
-    artRepo.findById(artId).orElseThrow(() -> new ObjectNotFoundException("art", artId));
+    Art art = artRepo.findById(artId).orElseThrow(() -> new ObjectNotFoundException("art", artId));
+//    art.getOwner().removeArt(art);
     artRepo.deleteById(artId);
   }
 }

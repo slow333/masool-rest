@@ -7,7 +7,6 @@ import ma.sool.art.Art;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Getter
 @Setter
@@ -18,7 +17,7 @@ import java.util.stream.Stream;
 public class Wiz implements Serializable {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.AUTO)
   Integer id;
 
   String name;
@@ -34,8 +33,13 @@ public class Wiz implements Serializable {
     return arts.size();
   };
 
-  public void removeAllArt() {
+  public void removeAllArts() {
     arts.forEach(art -> art.setOwner(null));
     arts = null;
+  }
+
+  public void removeArt(Art selectedArt) {
+    selectedArt.setOwner(null);
+    arts.remove(this);
   }
 }

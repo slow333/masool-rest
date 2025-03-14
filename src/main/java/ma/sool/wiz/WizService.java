@@ -23,20 +23,19 @@ public class WizService {
   }
 
   public Wiz saveWiz(Wiz wiz) {
-    Wiz savedWiz = wizRepo.save(wiz);
-    return savedWiz;
+    return wizRepo.save(wiz);
   }
 
   public Wiz updateWiz(Integer id, Wiz wiz) {
-    Wiz foundWiz = wizRepo.findById(id).orElseThrow(() -> new ObjectNotFoundException("wiz", id));
-    foundWiz.setName(wiz.getName());
-    Wiz savedWiz = wizRepo.save(foundWiz);
-    return savedWiz;
+    return wizRepo.findById(id).map(oldWiz -> {
+              oldWiz.setName(wiz.getName());
+              return wizRepo.save(oldWiz); })
+            .orElseThrow(() -> new ObjectNotFoundException("wiz", id));
   }
 
   public void deleteWiz(Integer id) {
-    Wiz wiz = wizRepo.findById(id).orElseThrow(() -> new ObjectNotFoundException("wiz", id));
-    wiz.removeAllArt();
+    Wiz wizDeleted = wizRepo.findById(id).orElseThrow(() -> new ObjectNotFoundException("wiz", id));
+    wizDeleted.removeAllArts();
     wizRepo.deleteById(id);
   }
 }
