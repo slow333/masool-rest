@@ -59,4 +59,10 @@ public class WizController {
     wizService.deleteWiz(wizId);
     return new Result(true, StatusCode.SUCCESS, "Delete Success");
   }
+
+  @PutMapping("/{wizId}/arts/{artId}")
+  public Result changeArtOwner(@PathVariable Integer wizId, @PathVariable String artId) {
+    wizService.changeArtOwner(wizId, artId);
+    return new Result(true, StatusCode.SUCCESS, "Art Change owner Success");
+  }
 }

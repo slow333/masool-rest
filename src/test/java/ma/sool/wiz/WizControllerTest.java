@@ -240,4 +240,46 @@ class WizControllerTest {
             .andExpect(jsonPath("$.data").isEmpty());
   }
 
+  @Test
+  void testChangeArtOwnerSuccess() throws Exception {
+    // Given
+    doNothing().when(wizService).changeArtOwner(2, "1250808601744904196");
+
+    // When and Then
+    mockMvc.perform(put(baseUrl+"/wizs/2/arts/1250808601744904196")
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(true))
+            .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+            .andExpect(jsonPath("$.message").value("Art Change owner Success"))
+            .andExpect(jsonPath("$.data").isEmpty());
+  }
+  @Test
+  void testChangeArtOwnerWithNoWizId() throws Exception {
+    // Given
+    doThrow(new ObjectNotFoundException("wiz", 5))
+            .when(wizService).changeArtOwner(5, "1250808601744904196");
+
+    // When and Then
+    mockMvc.perform(put(baseUrl+"/wizs/5/arts/1250808601744904196")
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(false))
+            .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
+            .andExpect(jsonPath("$.message").value("Could not find wiz with Id 5"))
+            .andExpect(jsonPath("$.data").isEmpty());
+  }
+  @Test
+  void testChangeArtOwnerWithNoArtId() throws Exception {
+    // Given
+    doThrow(new ObjectNotFoundException("art", "1250808601744904199"))
+            .when(wizService).changeArtOwner(5, "1250808601744904199");
+
+    // When and Then
+    mockMvc.perform(put(baseUrl+"/wizs/5/arts/1250808601744904199")
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.flag").value(false))
+            .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
+            .andExpect(jsonPath("$.message").value("Could not find art with Id 1250808601744904199"))
+            .andExpect(jsonPath("$.data").isEmpty());
+  }
+
 }
