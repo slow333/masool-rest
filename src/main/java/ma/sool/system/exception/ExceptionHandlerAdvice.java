@@ -3,6 +3,8 @@ package ma.sool.system.exception;
 import ma.sool.system.Result;
 import ma.sool.system.StatusCode;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,6 +23,12 @@ public class ExceptionHandlerAdvice {
   @ResponseStatus(HttpStatus.NOT_FOUND)
   Result handleObjectNotFoundException(ObjectNotFoundException ex) {
     return new Result(false, StatusCode.NOT_FOUND, ex.getMessage());
+  }
+
+  @ExceptionHandler({UsernameNotFoundException.class, BadCredentialsException.class})
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  Result handleAuthenticationException(Exception ex) {
+    return new Result(false, StatusCode.UNAUTHORIZED, "username or password is incorrect", ex.getMessage());
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)

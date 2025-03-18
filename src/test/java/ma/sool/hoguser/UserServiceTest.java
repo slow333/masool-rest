@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,8 @@ class UserServiceTest {
 
   @Mock
   UserRepo userRepo;
+  @Mock
+  PasswordEncoder passwordEncoder;
 
   @InjectMocks
   UserService userService;
@@ -153,9 +156,11 @@ class UserServiceTest {
     HogUser u1 = new HogUser();
     u1.setId(1L);
     u1.setUsername("kim");
+    u1.setPassword("123456");
     u1.setEnabled(true);
     u1.setRoles("admin user");
 
+    given(passwordEncoder.encode(u1.getPassword())).willReturn("");
     given(userRepo.save(u1)).willReturn(u1);
     // When
     HogUser foundUser = userService.addUser(u1);

@@ -1,6 +1,7 @@
 package ma.sool.hoguser;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import ma.sool.system.Result;
 import ma.sool.system.StatusCode;
 import ma.sool.system.converter.UserToDtoConverter;
@@ -11,17 +12,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("${api.base-url}/users")
+@RequiredArgsConstructor
 public class UserController {
 
   private final UserService userService;
   private final UserToDtoConverter userToDtoConverter;
   private final UserToEntityConverter userToEntityConverter;
-
-  public UserController(UserService userService, UserToDtoConverter userToDtoConverter, UserToEntityConverter userToEntityConverter) {
-    this.userService = userService;
-    this.userToDtoConverter = userToDtoConverter;
-    this.userToEntityConverter = userToEntityConverter;
-  }
 
   @GetMapping
   public Result findAllUsers() {

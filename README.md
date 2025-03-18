@@ -24,3 +24,22 @@
 ### local로 이동(인텔리제이)
 1. git switch main
 2. git pull // remote에서 통합한 main을 받음
+
+## jwp encoded
+> header.payload.sygnature
+
+> header ; { "alg": "RS256" }  → Base64 Encode
+
+> payload → Base64 Encode
+>
+```
+ { "iss": "self", // 별도 서버 없이 ...
+    "sub": "kim",
+    "exp": 12738472, // 만료 시간
+    "iat": 12738472,
+    "authorities": "ROLE_admin ROLE_user"
+ }
+```
+> Private key → Signing Algorithm(header, payload) → signature(Private key) → Base64 Encode
+
+> 최종 JWT

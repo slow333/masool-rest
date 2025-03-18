@@ -2,9 +2,14 @@ package ma.sool.art;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import ma.sool.hoguser.MyUserPrincipal;
+import ma.sool.hoguser.UserRepo;
 import ma.sool.system.IdWorker;
 import ma.sool.system.converter.ArtToDtoConverter;
 import ma.sool.system.exception.ObjectNotFoundException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,11 +18,12 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ArtService {
+public class ArtService{
 
   private final ArtRepo artRepo;
   private final IdWorker idWorker;
   private final ArtToDtoConverter artToDtoConverter;
+  private final UserRepo userRepo;
   
   public Art findById(String artId) {
     return artRepo.findById(artId).orElseThrow(() -> new ObjectNotFoundException("art", artId));
@@ -47,4 +53,5 @@ public class ArtService {
 //    art.getOwner().removeArt(art);
     artRepo.deleteById(artId);
   }
+
 }

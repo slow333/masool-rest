@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import ma.sool.art.Art;
 import ma.sool.art.ArtRepo;
 import ma.sool.hoguser.HogUser;
-import ma.sool.hoguser.UserRepo;
+import ma.sool.hoguser.UserService;
 import ma.sool.wiz.Wiz;
 import ma.sool.wiz.WizRepo;
 import org.springframework.boot.CommandLineRunner;
@@ -18,7 +18,7 @@ public class DBDataInitializer implements CommandLineRunner {
 
   private final ArtRepo artRepo;
   private final WizRepo wizRepo;
-  private final UserRepo userRepo;
+  private final UserService userService;
 
   @Override
   public void run(String... args) throws Exception {
@@ -59,58 +59,52 @@ public class DBDataInitializer implements CommandLineRunner {
     a6.setImgUrl("ImageUrl");
 
     Wiz w1 = new Wiz();
-    w1.setId(1);
     w1.setName("Albus Dumbledore");
     w1.addArt(a1);
     w1.addArt(a3);
 
     Wiz w2 = new Wiz();
-    w2.setId(2);
     w2.setName("Harry Potter");
     w2.addArt(a2);
     w2.addArt(a4);
 
     Wiz w3 = new Wiz();
-    w3.setId(3);
     w3.setName("Neville Longbottom");
     w3.addArt(a5);
 
-    HogUser u1 = new HogUser();
-    u1.setId(1L);
-    u1.setUsername("kim");
-    u1.setPassword("123");
-    u1.setEnabled(true);
-    u1.setRoles("admin user");
-
-    HogUser u2 = new HogUser();
-    u2.setId(2L);
-    u2.setUsername("woo");
-    u2.setPassword("321");
-    u2.setEnabled(true);
-    u2.setRoles("user");
-
-    HogUser u3 = new HogUser();
-    u3.setId(3L);
-    u3.setUsername("jin");
-    u3.setPassword("321");
-    u3.setEnabled(true);
-    u3.setRoles("user");
-
-    HogUser u4 = new HogUser();
-    u4.setId(4L);
-    u4.setUsername("dong");
-    u4.setPassword("321");
-    u4.setEnabled(false);
-    u4.setRoles("user");
+    artRepo.save(a6);
 
     wizRepo.save(w1);
     wizRepo.save(w2);
     wizRepo.save(w3);
 
-    artRepo.save(a6);
-    userRepo.save(u1);
-    userRepo.save(u2);
-    userRepo.save(u3);
-    userRepo.save(u4);
+    HogUser u1 = new HogUser();
+    u1.setUsername("kim");
+    u1.setPassword("123456");
+    u1.setEnabled(true);
+    u1.setRoles("admin user");
+
+    HogUser u2 = new HogUser();
+    u2.setUsername("woo");
+    u2.setPassword("123456");
+    u2.setEnabled(true);
+    u2.setRoles("user");
+
+    HogUser u3 = new HogUser();
+    u3.setUsername("jin");
+    u3.setPassword("123456");
+    u3.setEnabled(true);
+    u3.setRoles("user");
+
+    HogUser u4 = new HogUser();
+    u4.setUsername("dong");
+    u4.setPassword("123456");
+    u4.setEnabled(false);
+    u4.setRoles("user");
+
+    userService.addUser(u1);
+    userService.addUser(u2);
+    userService.addUser(u3);
+    userService.addUser(u4);
   }
 }
