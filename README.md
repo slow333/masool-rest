@@ -43,3 +43,5 @@
 > Private key → Signing Algorithm(header, payload) → signature(Private key) → Base64 Encode
 
 > 최종 JWT
+
+### Spring security exceptions are thrown before the controllers start to work !

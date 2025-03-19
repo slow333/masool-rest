@@ -43,9 +43,22 @@ public class SecurityConfiguration {
   private String baseUrl;
 
   private final CorsConfig corsConfig;
+  private final CustomBasicAuthenticationEntryPoint customBasicAuthenticationEntryPoint;
+  private final CustomBearerTokenAuthenticationEntryPoint customBearerTokenAuthenticationEntryPoint;
+  private final CustomBearerTokenAccessDeniedHandler customBearerTokenAccessDeniedHandler;
+  private final CustomInsufficientAuthenticationEntryPoint customInsufficientAuthenticationEntryPoint;
 
-    public SecurityConfiguration( CorsConfig corsConfig) throws NoSuchAlgorithmException {
+    public SecurityConfiguration(CorsConfig corsConfig,
+                                 CustomBasicAuthenticationEntryPoint customBasicAuthenticationEntryPoint,
+                                 CustomBearerTokenAuthenticationEntryPoint customBearerTokenAuthenticationEntryPoint,
+                                 CustomBearerTokenAccessDeniedHandler customBearerTokenAccessDeniedHandler,
+                                 CustomInsufficientAuthenticationEntryPoint customInsufficientAuthenticationEntryPoint)
+            throws NoSuchAlgorithmException {
         this.corsConfig = corsConfig;
+        this.customBasicAuthenticationEntryPoint = customBasicAuthenticationEntryPoint;
+        this.customBearerTokenAuthenticationEntryPoint = customBearerTokenAuthenticationEntryPoint;
+        this.customBearerTokenAccessDeniedHandler = customBearerTokenAccessDeniedHandler;
+        this.customInsufficientAuthenticationEntryPoint = customInsufficientAuthenticationEntryPoint;
         // public/private key pair 생성
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(2048);
@@ -71,10 +84,18 @@ public class SecurityConfiguration {
         .headers(headers -> headers.frameOptions().disable()) // h2-console x-frame 관련
         .csrf(AbstractHttpConfigurer::disable)
         .cors(Customizer.withDefaults())
-            // 기본 로그인 정책 Base64
-        .httpBasic(Customizer.withDefaults())
+//        .httpBasic(Customizer.withDefaults())
+        // 인증과정에서의 예외를 처리하기 위해 ...(entryPoint를 RestControllerAdvice에서 처리)
+        .httpBasic(httpBasic -> httpBasic
+//                .authenticationEntryPoint(customInsufficientAuthenticationEntryPoint)
+                .authenticationEntryPoint(customBasicAuthenticationEntryPoint)
+        )
             // jwt token 관련한 oauth2 설정
-        .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt())
+        .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
+                .jwt().and()
+                .authenticationEntryPoint(customBearerTokenAuthenticationEntryPoint)
+                .accessDeniedHandler(customBearerTokenAccessDeniedHandler)
+        )
         .sessionManagement(sessionManagement -> sessionManagement
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
     ;
