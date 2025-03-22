@@ -45,6 +45,8 @@ public class ArtControllerIntegrationTest {
 
     @BeforeEach
     void setup() throws Exception {
+        // jwt 생성을 위한 방법
+        // pom.xml에 spring-security-test 추가 필요
         ResultActions result = mockMvc.perform(post(url + "/users/login")
                 .with(httpBasic("kim", "123456")));
         MvcResult mvcResult = result.andDo(print()).andReturn();

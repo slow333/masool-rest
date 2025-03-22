@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
@@ -36,8 +37,8 @@ class WizControllerTest {
 
   @Autowired
   MockMvc mockMvc;
-  @MockBean
-  WizService wizService;
+  @MockitoBean
+  private WizService wizService;
 
   @Autowired
   ObjectMapper objectMapper;
@@ -52,7 +53,7 @@ class WizControllerTest {
     Art a1 = new Art();
     a1.setId("1250808601744904191");
     a1.setName("Deluminator");
-    a1.setDescription("A Deluminator is a device invented by Albus Dumbledore that resembles a cigarette lighter. It is used to remove or absorb (as well as return) the light from any light source to provide cover to the user.");
+    a1.setDescription("A Deluminator is a device invented by Albus Dumbledore that resembles a cigarette lighter....");
     a1.setImgUrl("ImageUrl");
 
     Art a2 = new Art();
@@ -64,25 +65,25 @@ class WizControllerTest {
     Art a3 = new Art();
     a3.setId("1250808601744904193");
     a3.setName("Elder Wand");
-    a3.setDescription("The Elder Wand, known throughout history as the Deathstick or the Wand of Destiny, is an extremely powerful wand made of elder wood with a core of Thestral tail hair.");
+    a3.setDescription("The Elder Wand, known throughout history as the Deathstick or the Wand of Destiny, ...");
     a3.setImgUrl("ImageUrl");
 
     Art a4 = new Art();
     a4.setId("1250808601744904194");
     a4.setName("The Marauder's Map");
-    a4.setDescription("A magical map of Hogwarts created by Remus Lupin, Peter Pettigrew, Sirius Black, and James Potter while they were students at Hogwarts.");
+    a4.setDescription("A magical map of Hogwarts created by Remus Lupin, Peter Pettigrew, Sirius Black, ....");
     a4.setImgUrl("ImageUrl");
 
     Art a5 = new Art();
     a5.setId("1250808601744904195");
     a5.setName("The Sword Of Gryffindor");
-    a5.setDescription("A goblin-made sword adorned with large rubies on the pommel. It was once owned by Godric Gryffindor, one of the medieval founders of Hogwarts.");
+    a5.setDescription("A goblin-made sword adorned with large rubies on the pommel. It was once owned by ....");
     a5.setImgUrl("ImageUrl");
 
     Art a6 = new Art();
     a6.setId("1250808601744904196");
     a6.setName("Resurrection Stone");
-    a6.setDescription("The Resurrection Stone allows the holder to bring back deceased loved ones, in a semi-physical form, and communicate with them.");
+    a6.setDescription("The Resurrection Stone allows the holder to bring back deceased loved ones, ....");
     a6.setImgUrl("ImageUrl");
 
     this.wizs = new ArrayList<>();
