@@ -111,6 +111,15 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+<!--	maven build in CI에서 user integration test 애러 방지용-->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<reuseForks>false</reuseForks>
+					<forkCount>1</forkCount>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
