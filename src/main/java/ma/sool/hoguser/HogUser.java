@@ -17,14 +17,14 @@ public class HogUser {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotEmpty(message = "username은 필수입니다.")
+  @NotEmpty(message = "username is required.")
   private String username;
 
-  @NotEmpty(message = "암호는 필수입니다.")
+  @NotEmpty(message = "password is required.")
   private String password;
 
   private boolean enabled;
 
-  @NotEmpty(message = "roles는 필수입니다.")
+  @NotEmpty(message = "roles is required.")
   private String roles; // 공백으로 구분(admin user)
 }
