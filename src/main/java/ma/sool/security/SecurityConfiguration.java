@@ -81,7 +81,7 @@ public class SecurityConfiguration {
             .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll() // h2-console 정책
             .anyRequest().authenticated() // 항상 마지막에 넣어야 함
       )
-        .headers(headers -> headers.frameOptions().disable()) // h2-console x-frame 관련
+        .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable()) // h2-console x-frame 관련
         .csrf(AbstractHttpConfigurer::disable)
         .cors(Customizer.withDefaults())
 //        .httpBasic(Customizer.withDefaults())

@@ -49,7 +49,7 @@ public class DBDataInitializer implements CommandLineRunner {
     Art a5 = new Art();
     a5.setId("1250808601744904195");
     a5.setName("The Sword Of Gryffindor");
-    a5.setDescription("A goblin-made sword adorned with large rubies on the pommel....");
+    a5.setDescription("A goblin-made sword adorned with large rubies on the ....");
     a5.setImgUrl("ImageUrl");
 
     Art a6 = new Art();
