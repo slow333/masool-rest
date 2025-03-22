@@ -66,10 +66,6 @@ class UserServiceTest {
     hogUsers.add(u4);
   }
 
-  @AfterEach
-  void tearDown() {
-  }
-
   @Test
   void testFindAllSuccess() {
     // given

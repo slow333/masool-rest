@@ -92,7 +92,7 @@ public class SecurityConfiguration {
         )
             // jwt token 관련한 oauth2 설정
         .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
-                .jwt().and()
+                .jwt(Customizer.withDefaults())
                 .authenticationEntryPoint(customBearerTokenAuthenticationEntryPoint)
                 .accessDeniedHandler(customBearerTokenAccessDeniedHandler)
         )

@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc(addFilters = false) // spring security 기능을 중지하고 시험
 class ArtControllerTest {
 
   @MockBean
@@ -128,7 +128,7 @@ class ArtControllerTest {
     mockMvc.perform(get(baseUrl+"/arts").accept(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.flag").value(true))
             .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
-            .andExpect(jsonPath("$.message").value("Find All"))
+            .andExpect(jsonPath("$.message").value("Find All Success"))
             .andExpect(jsonPath("$.data", Matchers.hasSize(arts.size())))
             .andExpect(jsonPath("$.data[0].id").value("1250808601744904191"))
             .andExpect(jsonPath("$.data[0].name").value("Deluminator"));

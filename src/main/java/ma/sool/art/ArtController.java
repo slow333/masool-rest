@@ -31,7 +31,7 @@ public class ArtController {
   public Result getArtAll() {
     List<Art> arts = artService.findAll();
     List<ArtDto> artDtos = arts.stream().map(artToDtoConverter::convert).toList();
-    return new Result(true, StatusCode.SUCCESS, "Find All", artDtos);
+    return new Result(true, StatusCode.SUCCESS, "Find All Success", artDtos);
   }
 
   @PostMapping
