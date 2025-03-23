@@ -1,19 +1,15 @@
 package ma.sool.art;
 
+import io.micrometer.core.annotation.Timed;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import ma.sool.hoguser.MyUserPrincipal;
 import ma.sool.hoguser.UserRepo;
 import ma.sool.system.IdWorker;
 import ma.sool.system.converter.ArtToDtoConverter;
 import ma.sool.system.exception.ObjectNotFoundException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -29,6 +25,7 @@ public class ArtService{
     return artRepo.findById(artId).orElseThrow(() -> new ObjectNotFoundException("art", artId));
   }
 
+  @Timed("findAllArtifactsService.time")
   public List<Art> findAll() {
     return artRepo.findAll();
   }

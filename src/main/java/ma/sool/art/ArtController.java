@@ -1,5 +1,6 @@
 package ma.sool.art;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ma.sool.system.converter.ArtToDtoConverter;
@@ -19,10 +20,12 @@ public class ArtController {
   private final ArtService artService;
   private final ArtToDtoConverter artToDtoConverter;
   private final ArtToEntityConverter artToEntityConverter;
+  private final MeterRegistry meterRegistry;
 
   @GetMapping("/{artId}")
   public Result getArtById(@PathVariable String artId) {
     Art result = artService.findById(artId);
+    meterRegistry.counter("artifact.id." + artId).increment();
     ArtDto artDto = artToDtoConverter.convert(result);
     return new Result(true, StatusCode.SUCCESS, "Find One Success", artDto);
   }

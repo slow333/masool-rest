@@ -23,7 +23,7 @@ public class UserController {
   public Result findAllUsers() {
     List<HogUser> foundUsers = userService.findAll();
     List<UserDto> userDtos = foundUsers.stream()
-            .map(userToDtoConverter::convert)
+            .map(userToDtoConverter::convert)// method...
             .toList();
     return new Result(true, StatusCode.SUCCESS, "Find All Success", userDtos);
   }
