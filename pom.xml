@@ -71,6 +71,16 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.hibernate</groupId>-->
+<!--			<artifactId>hibernate-entitymanager</artifactId>-->
+<!--			<version>5.3.13.Final</version>-->
+<!--		</dependency>-->
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
@@ -111,15 +121,15 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<plugin>
-<!--	maven build in CI에서 user integration test 애러 방지용-->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<reuseForks>false</reuseForks>
-					<forkCount>1</forkCount>
-				</configuration>
-			</plugin>
+<!--			<plugin>-->
+<!--&lt;!&ndash;	maven build in CI에서 user integration test 애러 방지용&ndash;&gt;-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-surefire-plugin</artifactId>-->
+<!--				<configuration>-->
+<!--					<reuseForks>false</reuseForks>-->
+<!--					<forkCount>1</forkCount>-->
+<!--				</configuration>-->
+<!--			</plugin>-->
 		</plugins>
 	</build>
 
