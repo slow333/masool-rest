@@ -74,6 +74,7 @@ public class SecurityConfiguration {
             // url에 대한 필터링 정책
         .authorizeHttpRequests(request -> request
             .requestMatchers(HttpMethod.GET, baseUrl+"/arts/**").permitAll()
+            .requestMatchers(HttpMethod.GET, baseUrl+"/users/login/**").permitAll()
             .requestMatchers(HttpMethod.GET, baseUrl+"/users/**").hasAuthority("ROLE_admin")
             .requestMatchers(HttpMethod.POST, baseUrl+"/users").hasAuthority("ROLE_admin")
             .requestMatchers(HttpMethod.PUT, baseUrl+"/users/**").hasAuthority("ROLE_admin")

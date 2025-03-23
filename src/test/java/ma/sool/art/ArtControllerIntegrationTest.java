@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -31,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @DisplayName("통합 시험, API endpoint")
 @Tag("통합시험")
+@ActiveProfiles(value = "dev")
 public class ArtControllerIntegrationTest {
 
     @Autowired
@@ -70,9 +72,9 @@ public class ArtControllerIntegrationTest {
     void 마술추가하기성공시험() throws Exception {
         // given
         Art a = new Art();
-        a.setName("마술기술");
-        a.setDescription("추가한 마술 기술");
-        a.setImgUrl("이미지");
+        a.setName("new arts");
+        a.setDescription("add artifact tech");
+        a.setImgUrl("image-url");
 
         String json = objectMapper.writeValueAsString(a);
         // when and then
@@ -84,7 +86,7 @@ public class ArtControllerIntegrationTest {
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(jsonPath("$.message").value("Add Success"))
                 .andExpect(jsonPath("$.data.id").isNotEmpty())
-                .andExpect(jsonPath("$.data.name").value("마술기술"));
+                .andExpect(jsonPath("$.data.name").value("new arts"));
         mockMvc.perform(get(url+"/arts").accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))

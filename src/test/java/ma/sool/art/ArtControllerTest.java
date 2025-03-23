@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -31,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false) // spring security 기능을 중지하고 시험
+@ActiveProfiles(value = "dev")
 class ArtControllerTest {
 
   @MockBean
@@ -91,9 +93,6 @@ class ArtControllerTest {
     a6.setImgUrl("ImageUrl");
     this.arts.add(a6);
   }
-
-  @AfterEach
-  void tearDown() {}
 
   @Test
   void testGetArtByIdSuccess() throws Exception {

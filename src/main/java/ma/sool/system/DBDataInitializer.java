@@ -8,12 +8,14 @@ import ma.sool.hoguser.UserService;
 import ma.sool.wiz.Wiz;
 import ma.sool.wiz.WizRepo;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
 @Component
 @RequiredArgsConstructor
+@Profile("dev")
 public class DBDataInitializer implements CommandLineRunner {
 
   private final ArtRepo artRepo;

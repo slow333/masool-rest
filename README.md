@@ -45,3 +45,6 @@
 > 최종 JWT
 
 ### Spring security exceptions are thrown before the controllers start to work !
+
+## application.properties 내에 있는 db 암호, 접속 정보를 암호화하고 서버에서 실행할때
+   정보를 가져와서 실행하는 방법을 찾아야함(아파치, eap 등에 있나 ?)
