@@ -58,4 +58,5 @@ public class ArtController {
     artService.deleteArt(artId);
     return new Result(true, StatusCode.SUCCESS, "Delete Success");
   }
+
 }

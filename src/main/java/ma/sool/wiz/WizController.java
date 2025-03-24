@@ -35,7 +35,7 @@ public class WizController {
   public Result findAll() {
     List<Wiz> wizs = wizService.findAll();
     List<WizDto> wizDtos = wizs.stream().map(wizToDtoConverter::convert).toList();
-    return new Result(true, StatusCode.SUCCESS, "Find all Success", wizDtos);
+    return new Result(true, StatusCode.SUCCESS, "Find All Success", wizDtos);
   }
 
   @PostMapping

@@ -148,7 +148,8 @@ public class HogUserControllerIntegrationTest {
 
         String json = objectMapper.writeValueAsString(hogwartsUser);
 
-        this.mockMvc.perform(put(this.url + "/users/2").accept(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(put(this.url + "/users/2")
+                        .accept(MediaType.APPLICATION_JSON)
                         .content(json).contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, this.token))
                 .andExpect(jsonPath("$.flag").value(true))
@@ -158,12 +159,14 @@ public class HogUserControllerIntegrationTest {
                 .andExpect(jsonPath("$.data.username").value("woo-update"))
                 .andExpect(jsonPath("$.data.roles").value("user"))
                 .andExpect(jsonPath("$.data.enabled").value(false))     ;
-        mockMvc.perform(get(url + "/users").accept(MediaType.APPLICATION_JSON).header("Authorization", token))
+        mockMvc.perform(get(url + "/users")
+                        .accept(MediaType.APPLICATION_JSON).header("Authorization", token))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(jsonPath("$.message").value("Find All Success"))
                 .andExpect(jsonPath("$.data", Matchers.hasSize(4)));
     }
+
     @Test
     @DisplayName("Check update with non existent user input (POST)")
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
@@ -183,20 +186,24 @@ public class HogUserControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Could not find user with Id 6"))
                 .andExpect(jsonPath("$.data").isEmpty());
     }
+
     @Test
     @DisplayName("Check deleteUser with valid input (DELETE)")
     void testDeleteUserSuccess() throws Exception {
-        this.mockMvc.perform(delete(url + "/users/2").accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
+        this.mockMvc.perform(delete(url + "/users/2").accept(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, this.token))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(jsonPath("$.message").value("Delete Success"))
                 .andExpect(jsonPath("$.data").isEmpty());
-        this.mockMvc.perform(get(url + "/users/2").accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
+        this.mockMvc.perform(get(url + "/users/2").accept(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, this.token))
                 .andExpect(jsonPath("$.flag").value(false))
                 .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
                 .andExpect(jsonPath("$.message").value("Could not find user with Id 2"))
                 .andExpect(jsonPath("$.data").isEmpty());
     }
+
     @Test
     @DisplayName("Check deleteUser with non existent id input (DELETE)")
     void testDeleteUserWithNonExistentUser() throws Exception {

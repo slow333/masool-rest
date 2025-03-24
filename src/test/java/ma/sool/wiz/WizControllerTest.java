@@ -111,10 +111,6 @@ class WizControllerTest {
     this.wizs.add(w3);
   }
 
-  @AfterEach
-  void tearDown() {
-  }
-
   @Test
   void findWizByIdSuccess() throws Exception {
     // given
@@ -126,7 +122,6 @@ class WizControllerTest {
             .andExpect(jsonPath("$.message").value("Find One Success"))
             .andExpect(jsonPath("$.data.id").value(3))
             .andExpect(jsonPath("$.data.name").value("Neville Longbottom"));
-
   }
   
   @Test
@@ -149,9 +144,10 @@ class WizControllerTest {
     mockMvc.perform(get(baseUrl + "/wizs").accept(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.flag").value(true))
             .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
-            .andExpect(jsonPath("$.message").value("Find all Success"))
+            .andExpect(jsonPath("$.message").value("Find All Success"))
             .andExpect(jsonPath("$.data", Matchers.hasSize(wizs.size())));
   }
+
   @Test
   void testAddWizSuccess() throws Exception {
     // Given
@@ -166,15 +162,14 @@ class WizControllerTest {
     // When and Then
     mockMvc.perform(post(baseUrl + "/wizs")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(json)
-                    .accept(MediaType.APPLICATION_JSON))
+                    .content(json).accept(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.flag").value(true))
             .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
             .andExpect(jsonPath("$.message").value("Add Success"))
             .andExpect(jsonPath("$.data.id").value(33))
-            .andExpect(jsonPath("$.data.name").value("Neville ADD"))
-    ;
+            .andExpect(jsonPath("$.data.name").value("Neville ADD"));
   }
+
   @Test
   void testUpdateSuccess() throws Exception {
     // Given
@@ -204,7 +199,8 @@ class WizControllerTest {
     WizDto oldDto = new WizDto(1, "Albus Dumbledore", null);
     String json = objectMapper.writeValueAsString(oldDto);
 
-    given(wizService.updateWiz(eq(1), Mockito.any(Wiz.class))).willThrow(new ObjectNotFoundException("wiz", 1));
+    given(wizService.updateWiz(eq(1), Mockito.any(Wiz.class)))
+            .willThrow(new ObjectNotFoundException("wiz", 1));
 
     // When and Then
     mockMvc.perform(put(baseUrl + "/wizs/1")
@@ -216,6 +212,7 @@ class WizControllerTest {
             .andExpect(jsonPath("$.message").value("Could not find wiz with Id 1"))
             .andExpect(jsonPath("$.data").isEmpty())
     ;  }
+
   @Test
   void testDeleteSuccess() throws Exception {
     // given
@@ -229,6 +226,7 @@ class WizControllerTest {
             .andExpect(jsonPath("$.message").value("Delete Success"))
             .andExpect(jsonPath("$.data").isEmpty());
   }
+
   @Test
   void testDeleteErrorWithId() throws Exception {
     // given
@@ -256,6 +254,7 @@ class WizControllerTest {
             .andExpect(jsonPath("$.message").value("Art Change owner Success"))
             .andExpect(jsonPath("$.data").isEmpty());
   }
+
   @Test
   void testChangeArtOwnerWithNoWizId() throws Exception {
     // Given
@@ -270,6 +269,7 @@ class WizControllerTest {
             .andExpect(jsonPath("$.message").value("Could not find wiz with Id 5"))
             .andExpect(jsonPath("$.data").isEmpty());
   }
+
   @Test
   void testChangeArtOwnerWithNoArtId() throws Exception {
     // Given
