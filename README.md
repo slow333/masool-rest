@@ -56,3 +56,5 @@
 3. jar 파일을 서버로 옮기기
 4. 서버에서 db의 권한 설정을 추가 : GRANT ALL PRIVILEGES ON *.* TO 'root'@'rhel8' IDENTIFIED BY '123456';
 5. java -jar ***.jar
+
+## grfana : admin / 123456
