@@ -1,6 +1,7 @@
 package ma.sool.art;
 
 import io.micrometer.core.annotation.Timed;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import ma.sool.hoguser.UserRepo;
@@ -20,7 +21,8 @@ public class ArtService{
   private final IdWorker idWorker;
   private final ArtToDtoConverter artToDtoConverter;
   private final UserRepo userRepo;
-  
+
+  @Observed(name="artifact", contextualName = "findByIdService")
   public Art findById(String artId) {
     return artRepo.findById(artId).orElseThrow(() -> new ObjectNotFoundException("art", artId));
   }
