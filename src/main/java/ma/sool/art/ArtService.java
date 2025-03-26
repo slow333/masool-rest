@@ -8,8 +8,13 @@ import ma.sool.hoguser.UserRepo;
 import ma.sool.system.IdWorker;
 import ma.sool.system.converter.ArtToDtoConverter;
 import ma.sool.system.exception.ObjectNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -53,4 +58,10 @@ public class ArtService{
     artRepo.deleteById(artId);
   }
 
+  public Page<Art> findAll(Pageable pageable) {
+    List<Sort.Order> sorts = new ArrayList<>();
+    sorts.add(Sort.Order.asc("name"));
+    Pageable pageable1 = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(sorts));
+    return artRepo.findAll(pageable1);
+  }
 }

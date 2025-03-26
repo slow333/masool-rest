@@ -7,8 +7,14 @@ import ma.sool.system.converter.ArtToDtoConverter;
 import ma.sool.system.Result;
 import ma.sool.system.StatusCode;
 import ma.sool.system.converter.ArtToEntityConverter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +29,7 @@ public class ArtController {
   private final MeterRegistry meterRegistry;
 
   @GetMapping("/{artId}")
-  public Result getArtById(@PathVariable String artId) {
+  public Result findArtById(@PathVariable String artId) {
     Art result = artService.findById(artId);
     meterRegistry.counter("artifact.id." + artId).increment();
     ArtDto artDto = artToDtoConverter.convert(result);
@@ -31,10 +37,10 @@ public class ArtController {
   }
 
   @GetMapping
-  public Result getArtAll() {
-    List<Art> arts = artService.findAll();
-    List<ArtDto> artDtos = arts.stream().map(artToDtoConverter::convert).toList();
-    return new Result(true, StatusCode.SUCCESS, "Find All Success", artDtos);
+  public Result findAllArts(@PageableDefault(size = 2, page = 1) Pageable pageable) { // page;0, size;20, sort;unsorted
+    Page<Art> artPage = artService.findAll(pageable); // Page streamable no need stream()
+    Page<ArtDto> artDtoPage = artPage.map(artToDtoConverter::convert);
+    return new Result(true, StatusCode.SUCCESS, "Find All Success", artDtoPage);
   }
 
   @PostMapping
@@ -58,5 +64,6 @@ public class ArtController {
     artService.deleteArt(artId);
     return new Result(true, StatusCode.SUCCESS, "Delete Success");
   }
+
 
 }
