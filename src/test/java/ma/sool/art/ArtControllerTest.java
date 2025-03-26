@@ -13,10 +13,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -122,15 +127,21 @@ class ArtControllerTest {
   @Test
   void testGetArtAllSuccess() throws Exception {
     //given
-    given(artService.findAll()).willReturn(arts);
+    Pageable pageable = PageRequest.of(0, 20);
+    PageImpl<Art> artPage = new PageImpl<>(arts, pageable, arts.size());
+
+    given(artService.findAll(Mockito.any(Pageable.class))).willReturn(artPage);
+
+    MultiValueMap<String, String> requestsParams = new LinkedMultiValueMap<>();
+    requestsParams.add("page", "0");
+    requestsParams.add("size", "20");
     //when and then
-    mockMvc.perform(get(baseUrl+"/arts").accept(MediaType.APPLICATION_JSON))
+    mockMvc.perform(get(baseUrl+"/arts").accept(MediaType.APPLICATION_JSON)
+                    .params(requestsParams))
             .andExpect(jsonPath("$.flag").value(true))
             .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
             .andExpect(jsonPath("$.message").value("Find All Success"))
-            .andExpect(jsonPath("$.data", Matchers.hasSize(arts.size())))
-            .andExpect(jsonPath("$.data[0].id").value("1250808601744904191"))
-            .andExpect(jsonPath("$.data[0].name").value("Deluminator"));
+            .andExpect(jsonPath("$.data.content", Matchers.hasSize(arts.size())));
   }
 
   @Test

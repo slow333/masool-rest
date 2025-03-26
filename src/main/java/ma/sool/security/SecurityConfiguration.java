@@ -72,7 +72,7 @@ public class SecurityConfiguration {
     @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-            // url에 대한 필터링 정책
+            // input url에 대한 필터링 정책
         .authorizeHttpRequests(request -> request
             .requestMatchers(HttpMethod.GET, baseUrl+"/arts/**").permitAll()
             .requestMatchers(HttpMethod.GET, baseUrl+"/users/login/**").permitAll()
